@@ -33,7 +33,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "mobx-useinject",
+  "name": "@dattebayorob/mobx-useinject",
   "author": "dattebayoRob",
   "repository": {
     "type": "git",
