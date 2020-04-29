@@ -1,15 +1,16 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { MobXProviderContext } from 'mobx-react';
 
 type ExtractTypeFromClass<T> = {
   [K in keyof T]: T[K] extends (new () => infer U) ? U : never;
 }
 
-export default <T extends (new () => any)[]>(...requestedStores: T) => {
+export default <T extends (new () => any)[]>(..._requestedStores: T) => {
+  const [ requestedStores ] = useState(_requestedStores);
   const contextsObject = useContext(MobXProviderContext);
 
   return useMemo(
-    () => requestedStores.map(findInstance(Object.values(contextsObject))), []
+    () => requestedStores.map(findInstance(Object.values(contextsObject))), [requestedStores, contextsObject]
   ) as ExtractTypeFromClass<T>;
 }
 
