@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useRef } from 'react';
 import { MobXProviderContext } from 'mobx-react';
 
 type ExtractTypeFromClass<T> = {
@@ -6,12 +6,13 @@ type ExtractTypeFromClass<T> = {
 };
 
 export default <T extends (new () => any)[]>(..._requestedStores: T) => {
-  const [requestedStores] = useState(_requestedStores);
+  const requestedStores = useRef(_requestedStores);
   const contextsObject = useContext(MobXProviderContext);
 
   return useMemo(
-    () => requestedStores.map(findInstance(Object.values(contextsObject))),
-    [requestedStores, contextsObject]
+    () =>
+      requestedStores.current.map(findInstance(Object.values(contextsObject))),
+    [contextsObject]
   ) as ExtractTypeFromClass<T>;
 };
 
