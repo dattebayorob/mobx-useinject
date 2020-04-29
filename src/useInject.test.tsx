@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import {Provider} from 'mobx-react';
+import { Provider } from 'mobx-react';
 import { useInject } from '.';
 
 class StoreA {
@@ -18,13 +18,13 @@ class StoreC {
 
 const Component = () => {
   const [a, b] = useInject(StoreA, StoreB);
-  return <p>{a.name + ' ' + b.name}</p>
-}
+  return <p>{a.name + ' ' + b.name}</p>;
+};
 
 const ComponentWithC = () => {
   const [c] = useInject(StoreC);
-  return <p>{c.name}</p>
-}
+  return <p>{c.name}</p>;
+};
 
 let container: HTMLDivElement | null;
 
@@ -40,23 +40,27 @@ afterEach(() => {
 
 describe('useInject', () => {
   it('Should return a tuple with the stores instances', () => {
-    act(() => (
+    act(() =>
       ReactDOM.render(
         <Provider storeA={new StoreA()} storeB={new StoreB()}>
           <Component />
-        </Provider>, container
+        </Provider>,
+        container
       )
-    ));
+    );
     const value = container?.querySelector('p');
     expect(value?.textContent).toBe('Store A Store B');
   });
   it('Should throw a exception if a store cant be found', () => {
-    expect( () => act(() => (
-      ReactDOM.render(
-        <Provider storeA={new StoreA()} storeB={new StoreB()}>
-          <ComponentWithC />
-        </Provider>, container
+    expect(() =>
+      act(() =>
+        ReactDOM.render(
+          <Provider storeA={new StoreA()} storeB={new StoreB()}>
+            <ComponentWithC />
+          </Provider>,
+          container
+        )
       )
-    ))).toThrowError("StoreC can't be found");
-  })
+    ).toThrowError("StoreC can't be found");
+  });
 });
