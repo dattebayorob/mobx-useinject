@@ -18,12 +18,21 @@ class StoreC {
 
 const Component = () => {
   const [a, b] = useInject(StoreA, StoreB);
-  return <p>{a.name + ' ' + b.name}</p>;
+  return <Template message={`${a.name} ${b.name}`} />;
+};
+
+const ComponentB = () => {
+  const { storeA, storeB } = useInject<{ storeA: StoreA; storeB: StoreB }>();
+  return <Template message={`${storeA.name} ${storeB.name}`} />;
 };
 
 const ComponentWithC = () => {
   const [c] = useInject(StoreC);
-  return <p>{c.name}</p>;
+  return <Template message={`${c.name}`} />;
+};
+
+const Template = ({ message }: { message: string }) => {
+  return <p>{message}</p>;
 };
 
 let container: HTMLDivElement | null;
@@ -62,5 +71,17 @@ describe('useInject', () => {
         )
       )
     ).toThrowError("StoreC can't be found");
+  });
+  it('Should return a object context when no param is passed', () => {
+    act(() =>
+      ReactDOM.render(
+        <Provider storeA={new StoreA()} storeB={new StoreB()}>
+          <ComponentB />
+        </Provider>,
+        container
+      )
+    );
+    const value = container?.querySelector('p');
+    expect(value?.textContent).toBe('Store A Store B');
   });
 });

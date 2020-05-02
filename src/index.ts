@@ -1,1 +1,1 @@
-export { default as useInject } from './useInject';
+export { useInject } from './useInject';
