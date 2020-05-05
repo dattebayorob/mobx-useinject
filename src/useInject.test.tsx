@@ -16,6 +16,13 @@ class StoreC {
   name = 'Store C';
 }
 
+class StoreD {
+  constructor( private _c: StoreC) {}
+  c() {
+    return this._c;
+  }
+}
+
 const Component = () => {
   const [a, b] = useInject(StoreA, StoreB);
   return <Template message={`${a.name} ${b.name}`} />;
@@ -30,6 +37,11 @@ const ComponentWithC = () => {
   const [c] = useInject(StoreC);
   return <Template message={`${c.name}`} />;
 };
+
+const ComponentWithD = () => {
+  const [d] = useInject(StoreD);
+  return <Template message={`${d.c().name}`} />;
+}
 
 const Template = ({ message }: { message: string }) => {
   return <p>{message}</p>;
@@ -84,4 +96,16 @@ describe('useInject', () => {
     const value = container?.querySelector('p');
     expect(value?.textContent).toBe('Store A Store B');
   });
+  it('Should return a tuple with D Store', () => {
+    act(() =>
+        ReactDOM.render(
+          <Provider storeC={new StoreD(new StoreC())}>
+            <ComponentWithD />
+          </Provider>,
+          container
+        )
+      );
+      const value = container?.querySelector('p');
+      expect(value?.textContent).toBe('Store C');
+  })
 });

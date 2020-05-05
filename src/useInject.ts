@@ -1,10 +1,10 @@
 import { useContext, useMemo, useRef } from 'react';
 import { MobXProviderContext } from 'mobx-react';
 
-type Class = new () => any;
+type Class<T = any> = new (...args: any) => T;
 
 type ExtractTypeFromClass<T> = {
-  [K in keyof T]: T[K] extends new () => infer U ? U : never;
+  [K in keyof T]: T[K] extends Class<infer U> ? U : any;
 };
 
 export function useInject<T = Record<string, any>>(): T;
